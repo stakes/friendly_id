@@ -59,8 +59,11 @@ module FriendlyId
       end
 
       def associated_friendly_classes
-        configured_class.reflect_on_all_associations.compact.select { |assoc|
-          !assoc.options[:polymorphic] && assoc.klass.respond_to?(:friendly_id_config)
+        a = configured_class.reflect_on_all_associations.compact.select { |assoc|
+          !assoc.options[:polymorphic] && !assoc.respond_to?(:klass)
+        }
+        a.select { |assoc| 
+          assoc.klass.respond_to?(:friendly_id_config)  
         }.map(&:klass)
       end
     end
